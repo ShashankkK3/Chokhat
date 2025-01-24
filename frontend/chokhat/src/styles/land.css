@@ -1,0 +1,173 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  background-color: #3d1f0f; /* Deep brown from your image */
+  background-image: url('../assets/chokhatbg1.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+
+
+
+
+/* ===== CENTER CONTENT ===== */
+.center-content {
+  width: 100%;
+  height: 100%;
+  /* padding: 0 0; */
+  padding-top: 10vh;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== HERO TEXT ===== */
+.hero-text-left {
+  position: relative;
+  opacity: 0;
+  z-index: 3;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: -19px;
+  margin-left: 60px;
+
+  animation: fadeIn 1.5s ease-out ;
+  animation-delay: 1.2s;
+  animation-fill-mode: forwards;
+}
+
+.get-line {
+  font-family: 'Playfair Display', serif;
+  font-size: 4.5rem;
+  font-weight: 600;
+  color: #f8f1e0;
+  margin-bottom: -2rem;
+  letter-spacing: 1px;
+}
+
+.everything-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-left: 4rem;
+}
+
+.everything {
+  font-family: 'Dancing Script', cursive;
+  font-size: 5rem;
+  color: #ff7e7e;
+  font-weight: 700;
+}
+
+.you-need {
+  font-family: 'Dancing Script', cursive;
+  font-size: 3rem;
+  color: #f8f1e0;
+  font-weight: 600;
+}
+
+.inside-line {
+  font-family: 'Dancing Script', cursive;
+  font-size: 3.5rem;
+  color: #f8f1e0;
+  margin-top: 1rem;
+  margin-left: 28rem;
+  font-weight: 600;
+}
+
+/* ===== LOGO ===== */
+.chokhat-logo {
+  position: absolute;
+  width: 440px;
+  top: 97%;
+  left: 79%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  filter: 
+    drop-shadow(0 0 10px rgba(255, 126, 126, 0.3))
+    brightness(1.05);
+}
+
+/* ===== DECORATIVE GLOWS ===== */
+.container::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 215, 0, 0.15) 0%,
+    transparent 70%
+  );
+  z-index: 1;
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  bottom: -200px;
+  left: -200px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 100, 100, 0.1) 0%,
+    transparent 70%
+  );
+  z-index: 1;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+  .get-line {
+    font-size: 3rem;
+  }
+
+  .everything-line {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 2rem;
+    gap: 0.5rem;
+  }
+
+  .everything {
+    font-size: 3.5rem;
+  }
+
+  .you-need {
+    font-size: 2.2rem;
+  }
+
+  .inside-line {
+    font-size: 2.5rem;
+    margin-left: 0;
+    text-align: center;
+    width: 100%;
+  }
+
+  .chokhat-logo {
+    width: 250px;
+    left: 50%;
+    top: 65%;
+  }
+
+  .container::before,
+  .container::after {
+    display: none;
+  }
+}
