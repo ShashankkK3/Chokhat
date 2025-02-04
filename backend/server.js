@@ -1,4 +1,5 @@
 import authRoutes from "./routes/authRoutes.js";
+import marketplaceRoutes from "./routes/marketplace.js";
 // server.js
 import express from "express";
 import mongoose from "mongoose";
@@ -19,6 +20,8 @@ app.use(express.json()); // Parses incoming JSON requests
 
 // Use routes
 app.use("/", authRoutes);
+app.use("/marketplace", marketplaceRoutes); // ADD THIS LINE
+
 // app.use("/api", protectedRoutes);
 
 // MongoDB connection

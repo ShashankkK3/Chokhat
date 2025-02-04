@@ -7,32 +7,42 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // ========== REGISTER ==========
+// controllers/authController.js
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role = 'user' } = req.body; // Default role: 'user'
 
-    // 1. Check if user already exists
+    // 1. Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // 2. Hash password
+    // 2. Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 3. Create new user
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-      role, // default is "user" if not provided
-    });
-
+    const newUser = new User({ name, email, password: hashedPassword, role });
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully!" });
+    // 3. Auto-generate token and login (NEW)
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // 4. Return same structure as login
+    res.status(201).json({
+      message: "Registration successful!",
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role
+      }
+    });
+
   } catch (err) {
-    console.error("Register error:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -57,16 +67,17 @@ export const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
-    });
+   // In login controller, ensure sensitive data isn't leaked
+res.status(200).json({
+  message: "Login successful",
+  token,
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+  }
+});
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res.status(500).json({ message: "Internal Server Error" });

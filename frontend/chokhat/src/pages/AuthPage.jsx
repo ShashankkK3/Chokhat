@@ -14,20 +14,24 @@ export default function AuthPage() {
     setError('');
     try {
       const endpoint = isLogin ? '/login' : '/register';
-      const res = await fetch(endpoint, {
+      const res = await fetch(`http://localhost:5000${endpoint}`, { // Add full backend URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+  
+      const data = await res.json();
+  
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || 'Server error');
+        throw new Error(data.message || 'Server error');
       }
-      const { user } = await res.json();
-      login(user);
+  
+      // Backend returns { message, token, user } - use token and user
+      login(data.user, data.token); // Pass both to AuthContext
       navigate('/');
     } catch (err) {
-      setError(err.message || 'Network error');
+      setError(err.message || 'Login failed. Please try again.');
+      console.error('Login error:', err); // Debugging
     }
   };
 
@@ -38,18 +42,32 @@ export default function AuthPage() {
           {isLogin ? 'Login' : 'Create Account'}
         </h2>
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-
         <form onSubmit={handleSubmit}>
-          {!isLogin && (
-            <input
-              name="name"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Full Name"
-              className="w-full mb-4 p-2 border rounded"
-              required
-            />
-          )}
+        {!isLogin && (
+  <>
+    {/* Name field */}
+    <input 
+      name="name"
+      value={formData.name}
+      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+      placeholder="Full Name"
+      className="w-full mb-4 p-2 border rounded"
+      required
+    />
+    
+    {/* Role dropdown (only user/vendor) */}
+    <select
+      name="role"
+      value={formData.role || 'user'} // Default to 'user'
+      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+      className="w-full mb-4 p-2 border rounded"
+    >
+      <option value="user">User</option>
+      <option value="vendor">Vendor</option>
+      <option value="admin">Admin</option>
+    </select>
+  </>
+)}
           <input
             type="email"
             name="email"
@@ -76,14 +94,10 @@ export default function AuthPage() {
             {isLogin ? 'Login' : 'Sign Up'}
           </button>
         </form>
-
         <p className="mt-4 text-center text-gray-600">
           {isLogin ? 'New to Chokhat? ' : 'Already have an account? '}
           <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setError('');
-            }}
+            onClick={() => { setIsLogin(!isLogin); setError(''); }}
             className="text-orange-500 hover:underline focus:outline-none"
           >
             {isLogin ? 'Create account' : 'Login'}
