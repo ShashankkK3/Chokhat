@@ -10,16 +10,16 @@ export default function Navbar() {
     <nav className="w-full px-6 h-[57px] bg-white shadow flex justify-between items-center">
       {/* Left Section: Logo */}
       <div className="flex items-center gap-7">
-        <Link to="/">
-          <img 
-            src={navLogo} 
-            alt="logo" 
+        <Link to={user?.role === 'user' ? '/dashboard/user' : '/'}>
+          <img
+            src={navLogo}
+            alt="logo"
             style={{
               height: '45px',
               width: 'auto',
               borderRadius: '8px',
               zIndex: 10
-            }} 
+            }}
           />
         </Link>
       </div>
@@ -37,7 +37,7 @@ export default function Navbar() {
         </Link>
 
         {/* 👇 Add ADMIN-ONLY link (example) */}
-        
+
       </div>
 
       {/* Right Section: User/Auth */}
@@ -45,17 +45,20 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {/* 👇 Show role badge if not a regular user */}
           {user.role !== 'user' && (
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              user.role === 'admin' 
-                ? 'bg-red-100 text-red-800' 
-                : 'bg-blue-100 text-blue-800'
-            }`}>
+            <span className={`text-xs px-2 py-1 rounded-full ${user.role === 'admin'
+              ? 'bg-red-100 text-red-800'
+              : 'bg-blue-100 text-blue-800'
+              }`}>
               {user.role}
             </span>
           )}
 
-          <Link to="/profile" className="flex items-center gap-2 px-4 py-2 rounded-full font-medium text-orange-800 hover:bg-orange-100">
-            <User size={18} /><span>{user.name}</span>
+          <Link
+            to={`/dashboard/${user.role}`}
+            className="flex items-center gap-2 px-4 py-2 rounded-full font-medium text-orange-800 hover:bg-orange-100"
+          >
+            <User size={18} />
+            <span>{user.name}</span>
           </Link>
           <button onClick={logout} className="text-sm text-gray-500 hover:underline">
             Logout

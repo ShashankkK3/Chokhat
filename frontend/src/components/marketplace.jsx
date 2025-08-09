@@ -1,14 +1,75 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { ShoppingCart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Marketplace() {
   const { user } = useAuth();
+  const navigate=useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const handleAddToCart = (product) => {
+    try {
+      const existingCartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+      const existingItemIndex = existingCartItems.findIndex((item) => item._id === product._id);
+      if (existingItemIndex >= 0) {
+        existingCartItems[existingItemIndex].quantity += 1;
+      } else {
+        existingCartItems.push({ ...product, quantity: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(existingCartItems));
+      // Simple feedback for now
+      // eslint-disable-next-line no-alert
+      alert('Added to cart');
+    } catch (cartError) {
+      console.error('Failed to add to cart:', cartError);
+    }
+  };
+
+  const handleOrderNow = async (product) => {
+    try {
+      const quantityInput = prompt('Enter quantity to order:', '1');
+      if (quantityInput === null) return; // user cancelled
+      const quantity = Math.max(1, Math.floor(Number(quantityInput)) || 1);
+
+      // Call backend to place order and decrement stock
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/marketplace/${product._id}/order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ quantity }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ message: 'Order failed' }));
+        alert(err.message || 'Order failed');
+        return;
+      }
+
+      const { order, product: updatedProduct } = await response.json();
+
+      // Save order locally for dashboard view
+      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      existingOrders.push({ ...order, orderId: `${Date.now()}-${Math.floor(Math.random() * 1000)}` });
+      localStorage.setItem('orders', JSON.stringify(existingOrders));
+
+      // Update products state with new stock value
+      setProducts((prev) => prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p)));
+      setFilteredProducts((prev) => prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p)));
+
+      alert('Order placed!');
+    } catch (orderError) {
+      console.error('Failed to place order:', orderError);
+      alert('Something went wrong placing the order');
+    }
+  };
 
   // Fetch products
   useEffect(() => {
@@ -63,12 +124,22 @@ export default function Marketplace() {
       
       <p className="font-bold mb-3">Discover authentic Indian home essentials</p>
       {(user?.role === 'vendor' || user?.role === 'admin') && (
-        <button 
-          className="bg-white text-orange-500 px-4 py-2 rounded-lg hover:bg-orange-100 transition-colors"
-          onClick={() => {}}
-        >
-          + Add Product
-        </button>
+        user?.role === 'vendor' && user?.status !== 'active' ? (
+          <button
+            className="bg-white/60 text-orange-400 px-4 py-2 rounded-lg cursor-not-allowed backdrop-blur-sm"
+            disabled
+            title="The product cannot be added as you are blocked"
+          >
+            + Add Product (blocked)
+          </button>
+        ) : (
+          <button 
+            className="bg-white text-orange-500 px-4 py-2 rounded-lg hover:bg-orange-100 transition-colors"
+            onClick={() => navigate('/add-product')}  
+          >
+            + Add Product
+          </button>
+        )
       )}
     </div>
   </div>
@@ -111,7 +182,7 @@ export default function Marketplace() {
           </div>
         </div>
 
-        {/* Add Product Button (Orange) */}
+       
 
       </div>
 
@@ -133,9 +204,34 @@ export default function Marketplace() {
               <h3 className="font-bold text-lg">{product.name}</h3>
               <p className="text-gray-800">₹{product.price.toLocaleString()}</p>
               <p className="text-sm text-gray-600 capitalize">{product.category}</p>
+              <p className="text-sm mt-1">
+                <span className={product.stock > 0 ? 'text-green-600' : 'text-red-600'}>
+                  {typeof product.stock === 'number' && product.stock > 0 ? 'In stock' : 'Out of stock'}
+                </span>
+              </p>
               <p className="text-xs text-gray-500 mt-2">
                 Sold by: {product.vendorId?.name || 'Unknown vendor'}
               </p>
+              {user?.role === 'user' && (
+                <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                  <button
+                    type="button"
+                    className={`w-full sm:w-auto px-4 py-2 rounded-md text-white transition-colors ${product.stock > 0 ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                    onClick={() => handleAddToCart(product)}
+                    disabled={!(typeof product.stock === 'number' && product.stock > 0)}
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    type="button"
+                    className={`w-full sm:w-auto px-4 py-2 rounded-md border transition-colors ${product.stock > 0 ? 'border-orange-500 text-orange-600 hover:bg-orange-50' : 'border-gray-300 text-gray-400 cursor-not-allowed'}`}
+                    onClick={() => handleOrderNow(product)}
+                    disabled={!(typeof product.stock === 'number' && product.stock > 0)}
+                  >
+                    Order Now
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

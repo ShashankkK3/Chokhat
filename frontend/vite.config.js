@@ -6,6 +6,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/marketplace': 'http://localhost:5000',
+      '/api': 'http://localhost:5000',
+      '/dashboard': 'http://localhost:5000',
     }
   }
 })
