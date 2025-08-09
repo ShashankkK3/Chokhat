@@ -20,7 +20,8 @@ export const register = async (req, res) => {
 
     // 2. Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword, role });
+    const initialStatus = role === 'vendor' ? 'pending' : 'active';
+    const newUser = new User({ name, email, password: hashedPassword, role, status: initialStatus });
     await newUser.save();
 
     // 3. Auto-generate token and login (NEW)
@@ -38,7 +39,8 @@ export const register = async (req, res) => {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        role: newUser.role
+        role: newUser.role,
+        status: newUser.status,
       }
     });
 
@@ -68,14 +70,15 @@ export const login = async (req, res) => {
     );
 
    // In login controller, ensure sensitive data isn't leaked
-res.status(200).json({
+ res.status(200).json({
   message: "Login successful",
   token,
   user: {
     id: user._id,
     name: user.name,
     email: user.email,
-    role: user.role
+    role: user.role,
+    status: user.status
   }
 });
   } catch (err) {

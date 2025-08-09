@@ -8,6 +8,16 @@ const productSchema = new mongoose.Schema({
     required: true,
     enum: ['Furniture', 'Decor', 'Kitchen', 'Lighting', 'Textiles', 'Storage']
   },
+  stock:{
+    type: Number,
+    required:true
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'approved'
+  },
+  rejectionReason: { type: String },
   vendorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   image: { type: String }, // URL to image
   createdAt: { type: Date, default: Date.now }

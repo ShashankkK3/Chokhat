@@ -21,7 +21,9 @@ app.use(express.json()); // Parses incoming JSON requests
 // Use routes
 app.use("/", authRoutes);
 app.use("/marketplace", marketplaceRoutes); // ADD THIS LINE
-
+// app.use("/add-product",marketplaceRoutes);
+// Add this with your existing routes
+app.use('/dashboard', marketplaceRoutes); // Direct dashboard route
 // app.use("/api", protectedRoutes);
 
 // MongoDB connection

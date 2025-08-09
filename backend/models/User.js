@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "vendor", "user"],
     default: "user",
     required:true
+  },
+  status: {
+    type: String,
+    enum: ["active", "blocked", "pending"],
+    default: "active"
   }
 }, { timestamps: true });
 
