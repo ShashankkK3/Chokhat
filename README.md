@@ -1,4 +1,4 @@
-![Chokhat-Logo](./screenshots/navLogo)
+![Chokhat-Logo](./screenshots/navlogo)
 # 🏠 HomeEssentials - Full-Stack Marketplace [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ![Project Banner](/screenshots/banner.png)
