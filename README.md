@@ -1,30 +1,29 @@
 ![Chokhat-Logo](./screenshots/navlogo.png)
-# 🏠 HomeEssentials - Full-Stack Marketplace [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-![Project Banner](/screenshots/banner.png)
+# 🏠 Chokhat - Full-Stack Marketplace [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A complete e-commerce solution for home goods with multi-role access control and modern UI.
 
 ## ✨ Features
 - **Role-Based Access Control** (User/Vendor/Admin)
 - **JWT Authentication** 🔒
-- **Product Management System** 📦
+- **Dedicated Dashboards for Users, Vendors and Admin** 📦
 - **Responsive UI** with Tailwind CSS
-- **Payment Integration** (Stripe/PayPal)
 
 ## 🛠 Tech Stack
 | Frontend              | Backend               | Database        |
 |-----------------------|-----------------------|-----------------|
 | React.js              | Node.js (Express)     | MongoDB         |
-| Tailwind CSS          | JWT Authentication    | Firebase Storage|
-| Redux Toolkit         | REST API              |                 |
+| Tailwind CSS          | JWT Authentication    | 
+|                       | REST API              |                 |
 
-## 📸 Screenshots
-<div align="center">
-  <img src="/screenshots/landing.png" width="30%" alt="Landing Page">
-  <img src="/screenshots/dashboard.png" width="30%" alt="Dashboard">
-  <img src="/screenshots/admin.png" width="30%" alt="Admin Panel">
-</div>
+## Landing Page
+  ![landing page](./screenshots/landingPage.png)
+ ![landing page](./screenshots/lp2.png)
+## Marketplace
+ ![img](./screenshots/marketplace1.png)
+ ![img](./screenshots/marketplace2.png)
+![img](./screenshots/marketplace3.png)
+ 
 
 ## 🚀 Installation
 
